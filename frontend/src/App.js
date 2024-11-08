@@ -4,22 +4,23 @@ import MonthDropdown from './components/MonthDropdown';
 import TransactionTable from './components/TransactionTable';
 import StatisticsBox from './components/StatisticsBox';
 import BarChart from './components/BarChart';
-import './App.css';
+import './index.css';
 
 const App = () => {
-    const [selectedMonth, setSelectedMonth] = useState('March'); // Default month
+    const [selectedMonth, setSelectedMonth] = useState('March');
     const [transactions, setTransactions] = useState([]);
     const [statistics, setStatistics] = useState({});
     const [barChartData, setBarChartData] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch data whenever selectedMonth changes
+    // Fetch transactions when the selected month changes
     useEffect(() => {
         fetchTransactions(selectedMonth);
         fetchStatistics(selectedMonth);
         fetchBarChartData(selectedMonth);
     }, [selectedMonth]);
 
+    // Function to fetch transactions
     const fetchTransactions = async (month) => {
         setLoading(true);
         try {
@@ -33,6 +34,7 @@ const App = () => {
         }
     };
 
+    // Function to fetch statistics
     const fetchStatistics = async (month) => {
         try {
             const response = await fetch(`http://localhost:5000/api/statistics?month=${month}`);
@@ -43,6 +45,7 @@ const App = () => {
         }
     };
 
+    // Function to fetch bar chart data
     const fetchBarChartData = async (month) => {
         try {
             const response = await fetch(`http://localhost:5000/api/bar-chart?month=${month}`);
@@ -58,7 +61,12 @@ const App = () => {
             <h1>Transaction Dashboard</h1>
             <MonthDropdown selectedMonth={selectedMonth} onSelectMonth={setSelectedMonth} />
             <StatisticsBox selectedMonth={selectedMonth} statistics={statistics} />
-            <TransactionTable selectedMonth={selectedMonth} transactions={transactions} loading={loading} />
+            <TransactionTable 
+                selectedMonth={selectedMonth} 
+                transactions={transactions} 
+                loading={loading} 
+                fetchTransactions={fetchTransactions}
+            />
             <BarChart selectedMonth={selectedMonth} barChartData={barChartData} />
         </div>
     );
